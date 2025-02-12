@@ -1,6 +1,6 @@
 # Ollama with Intel GPUs
 
-This repository demonstrates running Ollama with `ipex-llm` as an accelerated backend, compatible with both Intel iGPUs and dedicated GPUs (such as Arc, Flex, and Max). The provided `docker-compose.yml` file includes a patched version of Ollama for Intel acceleration with the required parameters and settings, along with the [Open WebUI](https://docs.openwebui.com/) interface for convenience.
+This repository demonstrates running [Ollama](https://github.com/ollama/ollama) with [`ipex-llm`](https://github.com/intel/ipex-llm) as an accelerated backend, compatible with both Intel iGPUs and dedicated GPUs (such as Arc, Flex, and Max). The provided `docker-compose.yml` file includes a patched version of Ollama for Intel acceleration with the required parameters and settings, along with the [Open WebUI](https://docs.openwebui.com/) interface for convenience.
 
 ## Quick Start
 
