@@ -89,5 +89,5 @@ The benchmark script is designed to be a standalone script that can be executed 
 
 ## Links
 
-1. Intel docs on `ipex-llm`: [Run Ollama with IPEX-LLM on Intel GPU](Run Ollama with IPEX-LLM on Intel GPU).
+1. Intel docs on `ipex-llm`: [Run Ollama with IPEX-LLM on Intel GPU](https://ipex-llm-latest.readthedocs.io/en/latest/doc/LLM/Quickstart/ollama_quickstart.html).
 2. [`ipex-llm` repo](https://github.com/intel/ipex-llm/tree/main).
