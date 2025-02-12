@@ -1,112 +1,93 @@
-# Python base project template
+# Ollama with Intel GPUs
 
-This is a basic Python project that can be used as a starting point for any
-Data Science or AI projects.
+This repository demonstrates running Ollama with `ipex-llm` as an accelerated backend, compatible with both Intel iGPUs and dedicated GPUs (such as Arc, Flex, and Max). The provided `docker-compose.yml` file includes a patched version of Ollama for Intel acceleration with the required parameters and settings, along with the [Open WebUI](https://docs.openwebui.com/) interface for convenience.
 
-The template includes:
+## Quick Start
 
-- Project structure, defined by the repo
-- Docker-based development environment, described below
-- Development [Style Guide](GUIDE.md)
-
-## Project structure
-
-### Directories
-
-* `data`: Data, including datasets for training and saved models. In most cases, the content of this directory should not be tracked by Git, except for small metadata files, like `.dvc` files, produced by [DVC](https://dvc.org/doc).
-* `src`: The project source code.
-* `scripts`: Small standalone scripts and utils. This directory can also contain entry point scripts, such as code to start training a model.
-* `configs`: Configuration files: YAML, JSON, TOML, and etc.
-* `tests`: Various test files, such as unit tests for `pytest`.
-* `docs`: Detailed documentation of the project, for example, as a collection of `.md` files with relevant images.
-* `notebooks`: Jupyter notebooks for data exploration and visualisation.
-
-### Files
-
-* `README.md`: The main readme file for the project, providing a high-level overview of its purpose, functionality and how to get started.
-* `Makefile`: A makefile for automating environment build and run processes. It may contain additional targets, like running tests, or generating documentation.
-* `Dockerfile`: Defines the project environment.
-* `requirements.txt`: A text file listing required Python packages with versions.
-* `.dockerignore`: A file specifying files and directories to exclude when building a Docker image.
-* `pyproject.toml`: The project configuration file defines metadata and other project-specific configurations.
-* `.gitignore`: A file listing files and directories that Git should not track.
-* `.pre-commit-config.yaml`: Configuration file for the pre-commit.
-
-## Environment setup
-
-The project uses [Docker](https://docs.docker.com/) to provide a reproducible environment for running
-the code. The environment is controlled by [Makefile](Makefile), which can be customized
-for the project needs.
-
-The provided Docker environment is a basic Python 3.11 image, but it can be
-configured by editing [Dockerfile](Dockerfile) to include any additional Linux
-packages required for the project. Alternatively, one can use different base
-Docker images, for example [nvidia/cuda](https://hub.docker.com/r/nvidia/cuda/#!).
-Configure [requirements.txt](requirements.txt) to include any additional Python
-packages.
-
-To build the environment, run in the project home directory:
-```bash
-make build
-```
-
-Once the image is built, start the container with:
-```bash
-make run
-```
-
-The container has the project root directory mounted to `/workdir`,
-so all the local files can be accessed in the directory from within the container. Files saved
-inside `/workdir` will be saved in the project root directory of the host machine.
-
-It is a good practice to develop inside the container using one's favorite IDE
-(e.g., VS Code or PyCharm) and execute the code from within the container.
-
-Note: the template is meant to be used as a development environment and for
-running the code in experimental setups. Production scenarios may require further modifications
-to suit one's needs, including security features.
-
-### Environment variables
-
-In order to provide environment variables, such as secrets, it is a common practice to define them in the `.env` file and add the file to the Docker run command in the Makefile with `--env-file=.env`. A sample structure of the `.env` file can be provided in the `.env.sample` file to make it easier for the user to fill with required values.
-
-### X11 support
-
-In order to run the code in a container with X11 support, for example, to enable interactive visualisation, the Docker run command in the Makefile should include the following lines:
-
-```
-        -v /tmp/.X11-unix:/tmp/.X11-unix \
-        -v $(HOME)/.Xauthority:/root/.Xauthority:rw \
-        -e DISPLAY=$(DISPLAY)
-```
-
-This allows use of the Linux host X11 server to access the display. Note that other host types may require a different approach.
-
-## Pre-commit hooks
-
-The project provides some basic pre-commit hooks, helping with code linting before committing. This is just an aid, although it's important to ensure that the final code is formatted correctly, follows PEP8, and adheres to the development [Style Guide](GUIDE.md).
-
-To install pre-commit hooks, run in the project home directory:
-```bash
-pip install pre-commit
-pre-commit install
-pre-commit install-hooks
-```
-
-The pre-commit hooks are defined in [.pre-commit-config.yaml](.pre-commit-config.yaml) and configured in [pyproject.toml](pyproject.toml). Feel free to customize them as needed.
-
-The default provided hooks include isort for sorting imports and Ruff for linting. If preferred, other hooks can be installed. If desired, [Ruff Formatter](https://docs.astral.sh/ruff/formatter/) can be enabled by uncommenting the corresponding block in the `.pre-commit-config.yaml` file.
-
-The installed pre-commits can be updated with:
+Using Intel GPUs requires that you have Intel firmware installed. For example, on Debian-like systems:
 
 ```bash
-pre-commit autoupdate
+sudo apt-get install firmware-misc-nonfree firmware-intel-graphics
+sudo update-initramfs -u -k all  # Required after kernel updates as well.
 ```
 
-The command will update `.pre-commit-config.yaml` file, so it needs to be commited to git.
+[Docker](https://docs.docker.com/engine/install/) and [docker compose](https://docs.docker.com/compose/install/) are also required.
+
+```bash
+docker compose build
+docker compose up -d
+```
+
+Open [http://127.0.0.1:18080](http://127.0.0.1:18080) to acsess Open WebUI with accelerated ollama backend.
+
+_Tip:_  For performance monitoring, including GPU utilization and power usage, `intel-gpu-top` is a useful tool:
+```
+sudo apt install intel-gpu-tools
+intel-gpu-top
+```
+
+Alternatively, one may compile [btop++](https://github.com/aristocratos/btop) with Intel GPU support.
+
+## Parameters
+
+The Docker environment is pre-configured to run on Intel iGPUs. Here are some parameters that may need adjustment:
+
+The [Dockerfile](Dockerfile) environment variables:
+* `DEVICE` variable if another hardware, such as a dedicated GPU, is used.
+* Customize `OLLAMA_NUM_GPU` if required to manage GPU offload.
+
+In the [docker-compose.yml](docker-compose.yml) file:
+* Configure the volumes of services to set up where data and models will be stored. Prefer using disks with fast I/O.
+* Use memory limit feature, such as `mem_limit: "32G"` to limit RAM used by ipex_ollama service.
+
+## Advice on performance
+
+1. If using CPU inference, tuning the `num_thread` model parameter in ollama for specific tasks (given the model and context length) may improve performance.
+2. Use the `cpuset` option in `docker-compose.yml` to pin the `ipex_ollama` service to specific CPU cores. For example, use `cpuset: "0-3"` to utilize the first four CPU cores (e.g., to use only performance cores). Select the most performant value empirically.
+
+## Benchmarks
+
+The script [scripts/benchmark.py](scripts/benchmark.py) contains a benchmarking tool that evaluates tokens/s generated by any OpenAI-compatible API, including benchmarks for both Language Models (LLMs) and Vision-Language Models (VLMs). The benchmarks are reported on an Intel Ultra 5 125H Meteor Lake SoC with 64GB RAM.
+
+With sufficient RAM, this SoC can handle relatively large models locally, making it a power-efficient solution for low-cost experiments with local models.
+
+Feel free to explore the benchmark code and adjust it as needed for your specific experimentation and setup. The provided code is configured to produce the results below, so ensure that the required models are pulled before running the benchmark script.
+
+The benchmark script is designed to be a standalone script that can be executed from the host machine (not from inside the Docker environment). You can use this benchmark code to test any OpenAI-compatible APIs by adjusting the API_URI and specifying the required model names.
+
+### Language models
+
+| Model               | Ultra 5 CPU tokens/s      | Ultra 5 iGPU tokens/s    | RTX 3090 tokens/s          |
+|---------------------|---------------------------|--------------------------|----------------------------|
+| deepseek-r1:70b     | 1.12 ± 0.07               | 1.55 ± 0.03              | NA                         |
+| llama3.3:70b        | 1.16 ± 0.01               | 1.58 ± 0.00              | NA                         |
+| llama3.1:70b        | 1.17 ± 0.00               | 1.57 ± 0.00              | NA                         |
+| qwen2.5:72b         | 1.11 ± 0.01               | 1.16 ± 0.00              | NA                         |
+| qwen2.5:32b         | 2.46 ± 0.01               | 3.22 ± 0.01              | 31.91 ± 0.34               |
+| qwen2.5:7b          | 10.27 ± 0.16              | 12.08 ± 0.08             | 101.03 ± 1.01              |
+| qwq                 | 2.29 ± 0.08               | 3.01 ± 0.04              | 30.53 ± 0.75               |
+| mistral-small:24b   | 3.42 ± 0.03               | 4.47 ± 0.02              | 45.31 ± 0.25               |
+| phi4:14b            | 5.30 ± 0.09               | 6.46 ± 0.06              | 64.09 ± 0.95               |
+| phi3.5:3.8b         | 19.16 ± 0.89              | 17.91 ± 2.08             | 171.51 ± 1.15              |
+| llama3.2:3b         | 20.33 ± 0.26              | 20.96 ± 0.34             | 161.96 ± 3.01              |
+| smallthinker:3b     | 13.79 ± 0.63              | 13.91 ± 0.87             | 105.53 ± 1.84              |
+| smollm2:1.7b        | 26.92 ± 0.79              | 26.34 ± 0.44             | 209.49 ± 1.78              |
+| smollm2:360m        | 56.67 ± 2.09              | 32.25 ± 0.32             | 250.60 ± 8.13              |
+| opencoder:1.5b      | 32.88 ± 1.60              | 17.67 ± 0.90             | 207.72 ± 3.92              |
+| llama3.1:8b         | 9.75 ± 0.20               | 11.52 ± 0.19             | 104.31 ± 2.06              |
+
+### VLMs
+
+| Model               | Ultra 5 iGPU tokens/s | RTX 3090 tokens/s |
+|---------------------|-----------------------|-------------------|
+| llama3.2-vision:90b | 0.92 ± 0.01           | NA                |
+| llama3.2-vision:11b | 5.73 ± 0.03           | 61.90 ± 0.20      |
+| minicpm-v:8b        | 14.94 ± 0.41          | 98.69 ± 0.18      |
+| llava-phi3:3.8b     | 18.93 ± 0.12          | 154.73 ± 1.62     |
+| moondream:1.8b      | 35.53 ± 1.48          | 280.98 ± 45.34    |
+
 
 ## Links
 
-The template is the result of years of experience within various development and research teams, as well as the result of inspiration from multiple successful ML competition projects, such as:
-* [1st place solution for SoccerNet Camera Calibration Challenge at CVPR 2023](https://github.com/NikolasEnt/soccernet-calibration-sportlight)
-* [1st place solution for SoccerNet Ball Action Spotting Challenge at CVPR 2023](https://github.com/lRomul/ball-action-spotting)
+1. Intel docs on `ipex-llm`: [Run Ollama with IPEX-LLM on Intel GPU](Run Ollama with IPEX-LLM on Intel GPU).
+2. [`ipex-llm` repo](https://github.com/intel/ipex-llm/tree/main).
