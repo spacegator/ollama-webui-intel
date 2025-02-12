@@ -1,6 +1,7 @@
 data/**
 !data/.gitkeep
-!data/images
+!data/images/
+!data/images/*
 
 .env
 
