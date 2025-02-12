@@ -1,21 +1,17 @@
-FROM python:3.11.11-bullseye
+FROM intelanalytics/ipex-llm-inference-cpp-xpu:2.2.0-SNAPSHOT
+# Device to use, like Max, Flex, Arc, iGPU
+ENV DEVICE=iGPU
+ENV OLLAMA_NUM_GPU=999
+ENV no_proxy=localhost,127.0.0.1
+ENV ZES_ENABLE_SYSMAN=1
+ENV SYCL_CACHE_PERSISTENT=1
+ENV ZES_ENABLE_SYSMAN=1
+# [optional] under most circumstances, the following environment variable may improve performance, but sometimes this may also cause performance degradation
+ENV SYCL_PI_LEVEL_ZERO_USE_IMMEDIATE_COMMANDLISTS=1
+# [optional] if you want to run on single GPU, use below command to limit GPU may improve performance
+ENV ONEAPI_DEVICE_SELECTOR=level_zero:0
+RUN mkdir -p /llm/ollama
+ENV LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/llm/ollama"
+RUN cd /llm/ollama && init-ollama
 
-ENV LANG C.UTF-8
-ENV DEBIAN_FRONTEND noninteractive
-
-RUN apt-get update && apt -y upgrade && \
-    apt-get -y install software-properties-common apt-utils && \
-    apt-get -y install build-essential cmake unzip git wget curl tmux sysstat \
-    vim  libtool  &&\
-    apt-get clean &&\
-    apt-get autoremove &&\
-    rm -rf /var/lib/apt/lists/* &&\
-    rm -rf /var/cache/apt/archives/*
-
-# Install requirements
-COPY requirements.txt /tmp/requirements.txt
-RUN pip3 install -r /tmp/requirements.txt
-
-ENV PYTHONPATH $PYTHONPATH:/workdir
-
-WORKDIR /workdir
+WORKDIR /llm/ollama
