@@ -20,7 +20,7 @@ docker compose build
 docker compose up -d
 ```
 
-Open [http://127.0.0.1:18080](http://127.0.0.1:18080) to acsess Open WebUI with accelerated ollama backend.
+Open [http://127.0.0.1:18080](http://127.0.0.1:18080) to access Open WebUI with accelerated ollama backend.
 
 _Tip:_  For performance monitoring, including GPU utilization and power usage, `intel-gpu-top` is a useful tool:
 ```
@@ -64,6 +64,7 @@ The benchmark script is designed to be a standalone script that can be executed 
 | deepseek-r1:70b     | 1.12 ± 0.07               | 1.55 ± 0.03              | NA                         |
 | llama3.3:70b        | 1.16 ± 0.01               | 1.58 ± 0.00              | NA                         |
 | llama3.1:70b        | 1.17 ± 0.00               | 1.57 ± 0.00              | NA                         |
+| llama3.1:8b         | 9.75 ± 0.20               | 11.52 ± 0.19             | 104.31 ± 2.06              |
 | qwen2.5:72b         | 1.11 ± 0.01               | 1.16 ± 0.00              | NA                         |
 | qwen2.5:32b         | 2.46 ± 0.01               | 3.22 ± 0.01              | 31.91 ± 0.34               |
 | qwen2.5:7b          | 10.27 ± 0.16              | 12.08 ± 0.08             | 101.03 ± 1.01              |
@@ -75,8 +76,9 @@ The benchmark script is designed to be a standalone script that can be executed 
 | smallthinker:3b     | 13.79 ± 0.63              | 13.91 ± 0.87             | 105.53 ± 1.84              |
 | smollm2:1.7b        | 26.92 ± 0.79              | 26.34 ± 0.44             | 209.49 ± 1.78              |
 | smollm2:360m        | 56.67 ± 2.09              | 32.25 ± 0.32             | 250.60 ± 8.13              |
+| starcoder2:3b       | 19.47 ± 1.51              | 22.30 ± 2.38             | 177.34 ± 3.42              |
+| qwen2.5-coder:1.5b  | 27.19 ± 0.26              | 36.74 ± 0.23             | 170.02 ± 4.20              |
 | opencoder:1.5b      | 32.88 ± 1.60              | 17.67 ± 0.90             | 207.72 ± 3.92              |
-| llama3.1:8b         | 9.75 ± 0.20               | 11.52 ± 0.19             | 104.31 ± 2.06              |
 
 ### VLMs
 
