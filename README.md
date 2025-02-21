@@ -4,6 +4,8 @@ This repository demonstrates running [Ollama](https://github.com/ollama/ollama) 
 
 ![Benchmark results](/readme_imgs/title.png)
 
+Read more about the project and benchmark results in blog post: [https://nikolasent.github.io/hardware/deeplearning/2025/02/09/iGPU-Benchmark-VLM.html](https://nikolasent.github.io/hardware/deeplearning/2025/02/09/iGPU-Benchmark-VLM.html).
+
 ## Quick Start
 
 Using Intel GPUs requires that you have Intel firmware installed. For example, on Debian-like systems:
@@ -40,7 +42,7 @@ The [Dockerfile](Dockerfile) environment variables:
 
 In the [docker-compose.yml](docker-compose.yml) file:
 * Configure the volumes of services to set up where data and models will be stored. Prefer using disks with fast I/O.
-* Use memory limit feature, such as `mem_limit: "32G"` to limit RAM used by ipex_ollama service.
+* Use memory limit feature, such as `mem_limit: "32G"`, to limit RAM used by ipex_ollama service.
 
 ## Advice on performance
 
@@ -89,7 +91,6 @@ The benchmark script is designed to be a standalone script that can be executed 
 | minicpm-v:8b        | 14.94 ± 0.41          | 98.69 ± 0.18      |
 | llava-phi3:3.8b     | 18.93 ± 0.12          | 154.73 ± 1.62     |
 | moondream:1.8b      | 35.53 ± 1.48          | 280.98 ± 45.34    |
-
 
 ## Links
 
