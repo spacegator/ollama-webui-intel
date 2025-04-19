@@ -36,13 +36,12 @@ Alternatively, one may compile [btop++](https://github.com/aristocratos/btop) wi
 
 The Docker environment is pre-configured to run on Intel iGPUs. Here are some parameters that may need adjustment:
 
-The [Dockerfile](Dockerfile) environment variables:
-* `DEVICE` variable if another hardware, such as a dedicated GPU, is used.
-* Customize `OLLAMA_NUM_GPU` if required to manage GPU offload.
-
 In the [docker-compose.yml](docker-compose.yml) file:
 * Configure the volumes of services to set up where data and models will be stored. Prefer using disks with fast I/O.
 * Use memory limit feature, such as `mem_limit: "32G"`, to limit RAM used by ipex_ollama service.
+* Configure `DEVICE` variable if another hardware, such as a dedicated GPU, is used.
+* Customize `OLLAMA_NUM_GPU` if required to manage GPU offload.
+* Other Ollama varibles can be specified in `environment` section of ipex_ollama service. For example, set `OLLAMA_CONTEXT_LENGTH` to change the default model context length.
 
 ## Advice on performance
 
