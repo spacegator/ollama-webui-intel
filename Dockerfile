@@ -1,4 +1,4 @@
-FROM intelanalytics/ipex-llm-inference-cpp-xpu:2.2.0-SNAPSHOT
+FROM intelanalytics/ipex-llm-inference-cpp-xpu:2.3.0-SNAPSHOT
 # Device to use, like Max, Flex, Arc, iGPU
 ENV DEVICE=iGPU
 ENV OLLAMA_NUM_GPU=999

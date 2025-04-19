@@ -1,7 +1,7 @@
 # Ollama with ipex (Intel iGPU acceleration) and
 services:
   ipex_ollama:
-    image: ipex_ollama:0.1.0
+    image: ipex_ollama:0.1.1
     build:
       dockerfile: ./Dockerfile
     container_name: ipex_ollama
@@ -24,7 +24,7 @@ services:
     command: bash -c "/llm/ollama/ollama serve > /logs/ollama.log"
   open-webui:
     container_name: open-webui
-    image: ghcr.io/open-webui/open-webui:v0.6.2
+    image: ghcr.io/open-webui/open-webui:v0.6.5
     ports:
       - 18080:8080
     extra_hosts:
