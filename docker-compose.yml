@@ -16,11 +16,18 @@ services:
     devices:
       - /dev/dri:/dev/dri
     environment:
-      - OLLAMA_KEEP_ALIVE=12h
-      - OLLAMA_HOST=0.0.0.0
-      - OLLAMA_NUM_PARALLEL=1 # Number of parallel request Ollama handle
-      - OLLAMA_MODELS=/models # Path to models storage
-      - PATH=/llm/ollama:$PATH
+      DEVICE: iGPU # Device to use, like Max, Flex, Arc, iGPU
+      OLLAMA_NUM_GPU: "999"
+      NO_PROXY: "localhost,127.0.0.1"
+      ZES_ENABLE_SYSMAN: 1
+      SYCL_CACHE_PERSISTENT: 1
+      SYCL_PI_LEVEL_ZERO_USE_IMMEDIATE_COMMANDLISTS: 1 # [optional] under most circumstances, the following environment variable may improve performance, but sometimes this may also cause performance degradation
+      ONEAPI_DEVICE_SELECTOR: "level_zero:0" # [optional] if you want to run on single GPU, use below command to limit GPU may improve performance
+      OLLAMA_KEEP_ALIVE: "12h"
+      OLLAMA_HOST: "0.0.0.0"
+      OLLAMA_NUM_PARALLEL: 1 # Number of parallel request Ollama handle
+      OLLAMA_MODELS: "/models" # Path to models storage
+      PATH: "/llm/ollama:$PATH"
     command: bash -c "/llm/ollama/ollama serve > /logs/ollama.log"
   open-webui:
     container_name: open-webui
@@ -37,4 +44,4 @@ services:
         condition: service_started
         restart: true
     environment:
-      - OLLAMA_BASE_URL=http://ipex_ollama:11434
+      OLLAMA_BASE_URL: "http://ipex_ollama:11434"
