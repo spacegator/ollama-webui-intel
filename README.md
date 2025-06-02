@@ -4,7 +4,7 @@ This repository demonstrates running [Ollama](https://github.com/ollama/ollama) 
 
 ![Benchmark results](/readme_imgs/title.png)
 
-Read more about the project and benchmark results in blog post: [https://nikolasent.github.io/hardware/deeplearning/2025/02/09/iGPU-Benchmark-VLM.html](https://nikolasent.github.io/hardware/deeplearning/2025/02/09/iGPU-Benchmark-VLM.html).
+Read more about the project and benchmark results in blog post: [https://nikolasent.github.io/hardware/deeplearning/2025/02/09/iGPU-Benchmark-VLM.html](https://nikolasent.github.io/hardware/deeplearning/2025/02/09/iGPU-Benchmark-VLM.html). The results were obtained with intelanalytics/ipex-llm-inference-cpp-xpu:2.2.0-SNAPSHOT base Docker image.
 
 ## Quick Start
 
