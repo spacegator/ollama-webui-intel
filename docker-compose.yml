@@ -1,4 +1,4 @@
-# Ollama with ipex (Intel iGPU acceleration) and
+# Ollama with ipex (Intel GPU acceleration)
 services:
   ipex_ollama:
     image: ipex_ollama:0.1.1
@@ -11,12 +11,12 @@ services:
     ports:
       - 11434:11434 # Expose port to use outside of webui
     volumes:
-      - ./data/models:/models # Change to use another location for model storage
+      - /mnt/Storage1/ai/llm/models:/models # Change to use another location for model storage
       - ./data/logs:/logs
     devices:
       - /dev/dri:/dev/dri
     environment:
-      DEVICE: iGPU # Device to use, like Max, Flex, Arc, iGPU
+      DEVICE: Arc # Device to use, like Max, Flex, Arc, iGPU
       OLLAMA_NUM_GPU: "999"
       NO_PROXY: "localhost,127.0.0.1"
       ZES_ENABLE_SYSMAN: 1
@@ -31,7 +31,7 @@ services:
     command: bash -c "/llm/ollama/ollama serve > /logs/ollama.log"
   open-webui:
     container_name: open-webui
-    image: ghcr.io/open-webui/open-webui:v0.6.14
+    image: ghcr.io/open-webui/open-webui:latest
     ports:
       - 18080:8080
     extra_hosts:
